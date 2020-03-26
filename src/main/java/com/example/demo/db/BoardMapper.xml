@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+	<select id="listBoard" resultType="boardVo">
+		select *from board
+	</select>
+	
+	<select id="detailBoard" resultType="boardVo">
+		select *from board where b_no=#{b_no} 
+	</select>
+	
+	<select id="viewBoard" resultType="boardVo">
+		select *from listboard order by b_no desc
+	</select>
+	
+	<select id="nextNo" resultType="java.lang.Integer">
+  		select nvl(max(b_no),0)+1 from board
+  	</select>
+	
+	<insert id="insertBoard">
+		insert into board(#{b_no},#{no},#{title},#{content},#{hit},#{b_date})
+	</insert>
+	
+	<update id="updateBoard">
+		update board set title=#{title}, content=#{content} where no=#{no}
+	</update>
+	
+	<delete id="deleteBoard">
+		delete board where b_no=#{b_no} and no=#{no}
+	</delete>
+	
+</mapper>

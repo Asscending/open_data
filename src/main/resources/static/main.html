@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>서울 문화 예술 공간</title>
+    <style type="text/css">
+        body {
+            min-height: 1000px;
+            /* background: url(//subtlepatterns.com/patterns/scribble_light.png); */
+            background-color: rgb(255, 255, 255);
+        }
+
+        #top {
+
+            width: 100%;
+            padding: 10px;
+        }
+
+        #main {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-family: "배달의민족 한나체 Air";
+            border-bottom: 2px solid rgb(109, 109, 109);
+
+        }
+
+        #main p {
+            font-size: 50px;
+            text-shadow: 2px 2px 2px rgb(124, 124, 124);
+            cursor: pointer;
+        }
+
+        #menu {
+            text-align: center;
+            width: 100%;
+            height: 100px;
+            border-bottom: 2px solid rgb(109, 109, 109);
+        }
+
+        #menu ul li {
+            font-family: "배달의민족 한나체 Air";
+            font-size: 35px;
+            display: inline-block;
+            list-style-type: none;
+            margin: 20px;
+            cursor: pointer;
+        }
+
+        .container {
+            column-width: 320px;
+            column-gap: 15px;
+            width: 90%;
+            max-width: 1100px;
+            margin: 50px auto;
+        }
+
+
+        #container figure {
+            background-color: rgb(233, 233, 233);
+            display: inline-block;
+            /* border: 1px solid gray;*/
+            border-radius: 10px;
+            margin: 0;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 5px 5px 5px rgb(66, 66, 66);
+            font-family: "배달의민족 한나체 Air";
+            font-size: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        #container figure img {
+            width: 330px;
+        }
+
+        #container figure figcaption {
+            border-top: 1px solid gray;
+            padding: 10px;
+            margin-top: 10px;
+
+        }
+
+        #mainText {
+            margin-top: 100px;
+            margin-left: 200px;
+        }
+
+        div#container:hover figure:not(:hover) {
+            opacity: 0.4;
+        }
+
+        .listMouse {
+            background-color: rgb(166, 166, 235);
+        }
+
+        #list_table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        #list_table>thead {
+            background-color: rgb(68, 70, 70);
+            color: #fff;
+        }
+
+        #list_table>thead>th {
+            padding: 8px;
+            width: 250px;
+        }
+
+        #list_table>tbody>tr>td {
+            border-bottom: 1px solid gray;
+            padding: 8px;
+            text-align: center;
+        }
+
+        /* 게시판  */
+
+        #boardTable {
+            width: 1000px;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        #boardTable>thead {
+            background-color: rgb(68, 70, 70);
+            color: #fff;
+        }
+
+        #boardTable>thead>th {
+            padding: 8px;
+            width: 250px;
+        }
+
+        #boardTable>tbody>tr>td {
+            border-bottom: 1px solid gray;
+            padding: 8px;
+            text-align: center;
+        }
+
+
+        #inputDiv {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #detailList>li {
+            font-size: 15px;
+            padding: 5px;
+        }
+
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=10bfa65a00d06624ce73ee6d30f8607d">
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            var cultureList;
+            var idx = 2;
+            var randomList = [];
+            $("#map").hide();
+            $("#board").hide();
+            $.getJSON("culture.json", function (data) {
+                cultureList = data.DATA;
+                $.each(cultureList, function (idx, item) {
+                    if (item.main_img != null && item.homepage != null) {
+                        randomList.push(item);
+                    }
+                })
+
+                for (var i = 0; i < 15; i++) {
+                    var random = Math.round(Math.random() * 651);
+                    var figure = $("<figure id='f'></figure>").attr("url", randomList[random].homepage);
+                    var img = $("<img></img>").attr("src", randomList[random].main_img);
+                    var figcaption = $("<figcaption></figcaption>").text(randomList[random].fac_name);
+                    $(figure).append(img, figcaption);
+                    $("#container").append(figure);
+                }
+            })
+
+            var randomMain = function (randomList) {
+                for (var i = 0; i < 13; i++) {
+                    var random = Math.round(Math.random() * 651);
+                    var figure = $("<figure id='f'></figure>").attr("url", randomList[random].homepage);
+                    var img = $("<img></img>").attr("src", randomList[random].main_img);
+                    var figcaption = $("<figcaption></figcaption>").text(randomList[random].fac_name);
+                    $(figure).append(img, figcaption);
+                    $("#container").append(figure);
+                }
+            }
+
+            $(document).on("click", "#f", function () {
+                var selUrl = $(this).attr("url");
+                var linkUrl = selUrl;
+                if (selUrl.substr(0, 3) == "www") {
+                    var linkUrl = "http://" + selUrl
+                    window.open(linkUrl);
+                } else {
+                    window.open(linkUrl);
+                }
+            })
+
+            $(document).on("click", "#url", function () {
+                var selUrl = $(this).attr("href");
+                var linkUrl = selUrl;
+                if (selUrl.substr(0, 3) == "www") {
+                    var linkUrl = "http://" + selUrl
+                    window.open(linkUrl);
+                } else {
+                    window.open(linkUrl);
+                }
+            })
+
+
+            $("#main").click(function () {
+                $("#map").hide();
+                $("#board").hide();
+                $("#container").removeClass("container");
+                $("#container").addClass("container");
+                $("#container").text("");
+                randomMain(randomList);
+            })
+
+            $("#info").click(function () {
+                $("#map").hide();
+                $("#board").hide();
+                $("#container").text("");
+                $("#container").removeClass("container");
+                var img = $("<img id='mainText'/>").attr("src", "main.png");
+                $("#container").append(img);
+            })
+
+
+            $("#find").click(function () {
+                $("#map").hide();
+                $("#board").hide();
+                $("#container").text("");
+                $("#container").removeClass("container");
+
+                var inputDiv = $("<div id='inputDiv'></div>");
+                var select = $("<select id='select'></select>");
+                var option1 = $("<option idx='2'>").text("기관명");
+                var option2 = $("<option idx='1'>").text("분류");
+                var option3 = $("<option idx='3'>").text("주소");
+                $(select).append(option1, option2, option3)
+                var keyword = $("<input type='text' id='keyword' placeholder='검색어를 입력하세요'>");
+                $(inputDiv).append(select, keyword);
+
+                //센터 리스트
+                var table = $("<table></table>").attr("id", "list_table");
+                var thead = $("<thead></thead>");
+                var tbody = $("<tbody></tbody>");
+                var th1 = $("<th></th>").text("분류");
+                var th2 = $("<th></th>").text("기관명");
+                var th3 = $("<th></th>").text("주소");
+                var th4 = $("<th></th>").text("연락처");
+                $(thead).append(th1, th2, th3, th4);
+                $.each(cultureList, function (idx, center) {
+                    var tr = $("<tr class='center_list'></tr>").attr("idx", idx);
+                    var td1 = $("<td></td>").text(center.codename);
+                    var td2 = $("<td></td>").text(center.fac_name);
+                    var td3 = $("<td></td>").text(center.addr);
+                    var td4 = $("<td></td>").text(center.phne);
+                    $(tr).append(td1, td2, td3, td4);
+                    $(tbody).append(tr);
+                })
+                $(table).append(thead, tbody);
+
+                $("#container").append(inputDiv, table);
+
+                $(".center_list").hover(function () {
+                    $(this).addClass("listMouse");
+                }, function () {
+                    $(this).removeClass("listMouse");
+                })
+            })
+
+            //상세정보
+            $(document).on("click", ".center_list", function () {
+                $("#container").text("");
+                $("#container").addClass("container");
+
+                var clickIdx = $(this).attr("idx");
+                $("#map").show();
+
+                var x = cultureList[clickIdx].x_coord;
+                var y = cultureList[clickIdx].y_coord;
+
+                var detail_title = $("<h2></h2>").text(cultureList[clickIdx].fac_name);
+                var detail_code = $("<li></li>").text("구분 : " + cultureList[clickIdx].codename);
+                var addr = $("<li></li>").text("주소 : " + cultureList[clickIdx].addr);
+                var close = $("<li></li>").text("휴관정보 : " + cultureList[clickIdx].closeday);
+                var phone = $("<li></li>").text("연락처 : " + cultureList[clickIdx].phne);
+                var url = $("<li id='url'></li>").text("홈페이지 : " + cultureList[clickIdx].homepage).attr(
+                    "href", cultureList[clickIdx].homepage);
+                var ul = $("<ul id='detailList'></ul>");
+
+                $(ul).append(detail_title, detail_code, addr, close, phone, url);
+
+                $("#container").append(ul);
+
+                var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                    mapOption = {
+                        center: new kakao.maps.LatLng(x, y), // 지도의 중심좌표
+                        level: 3 // 지도의 확대 레벨
+                    };
+
+                // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+                var map = new kakao.maps.Map(mapContainer, mapOption);
+
+                // 마커가 표시될 위치입니다 
+                var markerPosition = new kakao.maps.LatLng(x, y);
+
+                // 마커를 생성합니다
+                var marker = new kakao.maps.Marker({
+                    position: markerPosition
+                });
+
+                // 마커가 지도 위에 표시되도록 설정합니다
+                marker.setMap(map);
+
+            })
+
+            $(document).on("change", "#select", function () {
+                idx = $("#select > option:selected").attr("idx");
+
+            })
+
+            $(document).on("keyup", "#keyword", function () {
+                //$("#keyword").keyup(function(){   
+                var k = $(this).val();
+                $("#list_table > tbody > tr").hide();
+                var temp = $("#list_table > tbody > tr > td:nth-child(4n+" + idx +
+                    "):contains('" +
+                    k + "')");
+                $(temp).parent().show();
+            })
+
+            $("#free").click(function () {
+                $("#board").hide();
+                $("#board").show();
+                $("#container").text("");
+                $("#container").addClass("container");
+                $("#boardTable tbody").html("");
+
+                $.getJSON("listBoard", function (board) {
+                    var boardList = board;
+                    var tbody = $("<tbody></tbody>");
+                    console.log(board);
+                    $.each(boardList, function (idx, b) {
+                        var tr = $("<tr class='board_list'></tr>").attr("idx", idx);
+                        var td1 = $("<td></td>").text(b.b_no);
+                        var td2 = $("<td></td>").text(b.title);
+                        var td3 = $("<td></td>").text(b.name);
+                        var td4 = $("<td></td>").text(b.b_date);
+                        $(tr).append(td1, td2, td3, td4);
+                        $(tbody).append(tr);
+                    })
+                    $("#boardTable").append(tbody);
+                })
+            })
+        })
+    </script>
+</head>
+
+<body>
+    <div id="top">
+        <div id="main">
+            <p id="mainTitle">서울 문화 예술 공간</p>
+        </div>
+        <div id="menu">
+            <ul>
+                <li id="info">소개</li>
+                <li id="find">기관찾기</li>
+                <li id="free">자유게시판</li>
+            </ul>
+        </div>
+    </div>
+    <div id="map" style="width:500px;height:350px;" class="container"></div>
+    <div id="board">
+        <table id="boardTable">
+            <thead>
+                <th>글 번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+            </thead>
+        </table>
+    </div>
+    <div id="container" class="container">
+
+    </div>
+</body>
+
+</html>

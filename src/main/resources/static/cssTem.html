@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <style type="text/css">
+        body {
+            margin: 0px;
+            padding: 0px;
+            background-color: rgba(109, 109, 109, 0.575);
+        }
+
+        .mouseOn {
+            font-size: 23px;
+            color: rgb(220, 227, 231);
+        }
+
+        .select {
+            background-color: rgb(78, 78, 78);
+            color: aliceblue;
+        }
+
+        #menu {
+            background-color: rgb(68, 70, 70);
+            position: fixed;
+            overflow: auto;
+            display: inline-block;
+            height: 100%;
+            width: 250px;
+        }
+
+        #menuTop {
+            width: 230px;
+            height: 50px;
+            display: inline-block;
+            color: rgb(182, 182, 187);
+            position: fixed;
+            border-bottom: white solid 2px;
+            top: 30px;
+            left: 10px;
+        }
+
+        #title {
+            display: inline-block;
+            color: rgb(182, 182, 187);
+            font-size: 30px;
+
+        }
+
+        #titleIcon {
+            display: inline-block;
+
+        }
+
+        #menuList {
+            display: inline-block;
+            color: rgb(182, 182, 187);
+            font-size: 20px;
+            margin-left: 30px;
+            margin-top: 130px;
+        }
+
+        .list {
+            margin: 10px;
+        }
+
+        #container {
+            padding: 10px;
+            position: fixed;
+            height: 100%;
+            width: 100%;
+            margin-left: 270px;
+            padding-left: 30px;
+            background-color: rgba(233, 229, 229, 0.658);
+            overflow: auto;
+            display: inline-block;
+        }
+
+        #containerTitle {
+            display: inline-block;
+            position: fixed;
+            border: rgba(0, 0, 0, 0) 1px solid;
+            color: rgb(78, 78, 82);
+            font-size: 25px;
+            width: 700px;
+            height: 60px;
+            top: 50px;
+        }
+
+        #content {
+            display: inline-block;
+            position: fixed;
+            color: rgb(78, 78, 82);
+            top: 120px;
+            border: rgba(0, 0, 0, 0) 1px solid;
+            height: 330px;
+            width: 900px;
+            overflow: auto;
+            padding: 20px;
+        }
+
+        #content2 {
+            display: inline-block;
+            position: fixed;
+            color: rgb(78, 78, 82);
+            top: 460px;
+            height: 200px;
+            width: 900px;
+            overflow: auto;
+            padding: 20px;
+        }
+
+        #thead {
+            background-color: rgba(56, 55, 55, 0.459);
+            color: rgba(255, 255, 255, 0.863);
+        }
+
+        .td {
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var deptList;
+            var idx; //클릭된 idx의 정보를 담기 위한 전역변수
+            function listDept() {
+
+            }
+            $(document).ready(function () {
+                $("#menuTop").click();
+            });
+
+            $(document).on("click", "#menuTop", function () {
+                $("#containerTitle").html("");
+                $("#content").html("");
+                $("#content2").html("");
+                var h3 = $("<h3></h3>").html("JT Company 관리 페이지");
+                $("#containerTitle").append(h3);
+                var h4 = $("<h4></h4>").html("부서 및 사원 관리자 페이지 입니다.");
+                $("#content").append(h4);
+            })
+
+            $(".list").click(function () {
+                $("#containerTitle").text("");
+                $("#content").html("");
+                $("#content2").html("");
+                var text = $(this).text();
+                var p = $("<p></p>").html(text);
+                $("#containerTitle").append(p);
+            })
+
+            $(".list").hover(function () {
+                $(this).addClass("mouseOn");
+            }, function () {
+                $(this).removeClass("mouseOn");
+            })
+
+            $(document).on("click", "#mag", function () {
+                $("#content").html("");
+                var h3 = $("<h3></h3>").html("부서 등록");
+                var input1 = $("<input type='number' id='dno'>");
+                var input2 = $("<input type='text' id='dname'>");
+                var input3 = $("<input type='text' id='dloc'>");
+                var addBtn = $("<button id='addBtn'></button>").html("등록");
+                $("#content").append(h3, "부서 번호 : ", input1, "<br>", "부서 이름 : ", input2, "<br>",
+                    "부서 위치 : ", input3, "<br>", addBtn);
+
+            })
+
+            $(document).on("click", "#deptList", function () {
+                $.getJSON("listDept.do", function (data) {
+                    deptList = data;
+                    var tb = $("<table id='tbDept' width='80%' border='1'></table>");
+                    var thead = $("<thead id='thead'></thead>");
+                    var th1 = $("<th></th>").html("부서번호");
+                    var th2 = $("<th></th>").html("부서명");
+                    var th3 = $("<th></th>").html("부서위치");
+                    $(thead).append(th1, th2, th3);
+                    $(tb).append(thead);
+                    $.each(deptList, function (idx, dept) {
+                        var tb1 = $("<td class='td'></td>").html(dept.dno);
+                        var tb2 = $("<td class='td'></td>").html(dept.dname);
+                        var tb3 = $("<td class='td'></td>").html(dept.dloc);
+                        var tr = $("<tr class='tr'></tr>").attr("idx", idx);
+                        $(tr).append(tb1, tb2, tb3);
+                        $(tb).append(tr);
+
+                    })
+                    $("#content").append(tb);
+                })
+            })
+
+
+            $(document).on("click", ".tr", function () {
+                $("#content2").html("");
+                $(".tr").removeClass("select");
+                $(this).addClass("select");
+                idx = $(this).attr("idx");
+                var dno = deptList[idx].dno;
+                var dname = deptList[idx].dname;
+                var dloc = deptList[idx].dloc;
+                var h5 = $("<h5></h5>").text("부서 수정 / 삭제")
+                var input1 = $("<input type='number' id='dno' readonly='readonly'>").val(dno);
+                var input2 = $("<input type='text' id='dname'>").val(dname);
+                var input3 = $("<input type='text' id='dloc'>").val(dloc);
+                var editBtn = $("<button id='editBtn'></button>").html("수정");
+                var delBtn = $("<button id='delBtn'></button>").html("삭제");
+                $("#content2").append(h5, "부서번호 : ", input1, "<br>", "부서이름 : ", input2, "<br>",
+                    "부서위치 : ", input3, "<br>", editBtn, delBtn);
+            })
+
+            //등록
+            $(document).on("click", "#addBtn", function () {
+                var dno = $("#dno").val();
+                var dname = $("#dname").val();
+                var dloc = $("#dloc").val();
+                var dept = {
+                    dno: dno,
+                    dname: dname,
+                    dloc: dloc
+                };
+                $.ajax("insertDept.do", {
+                    data: dept,
+                    success: function (result) {
+                        alert(result);
+                    },
+                    error: function () {
+                        alert("성공이 동작을 안해유,,");
+                    }
+                })
+                $("#deptList").click();
+            })
+
+            //삭제
+            $(document).on("click", "#delBtn", function () {
+                var result = confirm("정말로 삭제하시겠습니까?");
+                var dno = {
+                    dno: deptList[idx].dno
+                };
+                if (result) {
+                    $.ajax("deleteDept.do", {
+                        data: dno,
+                        success: function (result) {
+                            alert(result);
+                            $("#deptList").click();
+                        }
+                    })
+                }
+            })
+
+            //수정
+            $(document).on("click", "#editBtn", function () {
+                var dno = $("#dno").val();
+                var dname = $("#dname").val();
+                var dloc = $("#dloc").val();
+                var dept = {
+                    dno: dno,
+                    dname: dname,
+                    dloc: dloc
+                };
+                // alert(dno,dname,dloc)
+                $.ajax("updateDept.do", {
+                    data: dept,
+                    success: function (result) {
+                        alert(result);
+                        $("#deptList").click();
+                    }
+                })
+            })
+
+
+
+        })
+    </script>
+</head>
+
+<body>
+    <div id="menu">
+        <div id="menuTop">
+            <div id="titleIcon"><img src="icon.jpg" width="30px" height="30px"></div>
+            <div id="title">JT Company</div>
+        </div>
+        <div id="menuList">
+            <div class="list" id="mag">부서 관리</div>
+            <div class="list" id="deptList">부서 목록</div>
+        </div>
+    </div>
+    <div id="container">
+        <div id="containerTitle"></div>
+        <div id="content"></div>
+        <div id="content2"></div>
+    </div>
+</body>
+
+</html>
